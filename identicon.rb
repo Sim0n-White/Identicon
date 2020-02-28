@@ -12,7 +12,6 @@ class Identicon
 
   def generate
     identicon = arrInput(user_name)
-    p identicon.byte_array
     makeGrid(identicon)
     MiniMagick::Tool::Convert.new do |i|
       i.size "250x250"
@@ -44,8 +43,7 @@ class Identicon
   end
 
   def arrInput(name)
-    byte_array = Digest::MD5.hexdigest(name).chars.each_slice(2).map(&:join)
-    byte_array = byte_array.map(&:hex)
+    byte_array = Digest::MD5.hexdigest(name).chars.each_slice(2).map(&:join).map(&:hex)
     color = byte_array.slice(0,3)
     case color = color.each_with_index.max[1]
     when 0
@@ -60,7 +58,17 @@ class Identicon
 
   def makeGrid(identicon)
     grid = []
-
+    i = 0
+    while (i <= identicon.byte_array.length) && (i+3 <= identicon.byte_array.length-1)
+      fill = identicon.byte_array[i..i+3]
+      p fill
+      fill[3] = fill[1]
+      fill[4] = fill[0]
+      grid.concat fill
+      i+=3
+      p i
+    end
+    identicon.grid = grid
   end
 
 
