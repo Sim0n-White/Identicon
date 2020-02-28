@@ -30,8 +30,8 @@ class Identicon
       k << "part.png"
     end
 
-    image = MiniMagick::Image.new("test_image.png")
-    cube = MiniMagick::Image.new("cube.png")
+    image = MiniMagick::Image.new("identicon.png")
+    cube = MiniMagick::Image.new("part.png")
     identicon.markPoint.length.times do |i|
       result = image.composite(cube) do |c|
         x = identicon.markPoint[i] % 5 * 50
