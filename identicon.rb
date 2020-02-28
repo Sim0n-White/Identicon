@@ -16,5 +16,25 @@ class Identicon
       i.caption "test"
       i << "test_image.png"
     end
+
+    MiniMagick::Tool::Convert.new do |k|
+      k.size "50x50"
+      k.gravity "center"
+      k.xc "green"
+      k.caption "cube"
+      k << "cube.png"
+    end
+
+    image = MiniMagick::Image.new("test_image.png")
+    cube = MiniMagick::Image.new("cube.png")
+    sum = 0
+    3.times do
+      result = image.composite(cube) do |c|
+        sum = sum + 50
+        c.compose "Over"
+        c.geometry "+#{sum}+100"
+      end
+      result.write "test_image.png"
+    end
   end
 end
