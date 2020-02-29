@@ -1,25 +1,36 @@
 require 'mini_magick'
 require 'digest/md5'
-## Параметр user_name - строка
-## Параметр path - строка пути, куда сохраняется png с идентиконом. Опциональный, по умолчанию сохраняется в текущую папку
+
 class Identicon
-  attr_accessor :user_name, :path
   Tobyte = Struct.new(:name, :byte_array, :color_byte, :grid, :markPoint)
-  def initialize(user_name, path = __dir__)
-    @user_name = user_name
-    @path = path
+
+  def initialize(user_name, path)
+    if user_name.nil? || user_name.empty?
+      @user_name = "unknown"
+    else
+      @user_name = user_name
+    end
+    if path.nil? || path.empty?
+      @path = __dir__
+    else
+      if File.directory?(path)
+        @path = path
+      else
+        @path = __dir__
+      end
+    end
   end
 
   def generate
-    identicon = arrInput(user_name)
+    identicon = arrInput(@user_name)
     makeGrid(identicon)
     findBox(identicon)
     MiniMagick::Tool::Convert.new do |i|
       i.size "250x250"
       i.gravity "center"
       i.xc "white"
-      i.caption "identicon"
-      i << "identicon.png"
+      i.caption "#{@user_name}"
+      i << "#{@path}/#{@user_name}.png"
     end
 
     MiniMagick::Tool::Convert.new do |k|
@@ -30,7 +41,7 @@ class Identicon
       k << "part.png"
     end
 
-    image = MiniMagick::Image.new("identicon.png")
+    image = MiniMagick::Image.new("#{@path}/#{@user_name}.png")
     cube = MiniMagick::Image.new("part.png")
     identicon.markPoint.length.times do |i|
       result = image.composite(cube) do |c|
@@ -40,10 +51,9 @@ class Identicon
         c.compose "Over"
         c.geometry "+#{x}+#{y}"
       end
-      result.write "identicon.png"
+      result.write "#{@path}/#{@user_name}.png"
     end
-
-
+    File.delete("part.png")
   end
 
   def arrInput(name)
