@@ -4,6 +4,6 @@
 
 Примеры созданных Identicon по user_name: Simon, Natalia, Identicon
 
-(Picture_example/Simon.png)
-(Picture_example/Natalia.png)
-(Picture_example/Identicon.png)
+![example1](Picture_example/Simon.png)
+![example2](Picture_example/Natalia.png)
+![example3](Picture_example/Identicon.png)
